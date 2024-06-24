@@ -5,20 +5,13 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/AlexandreSchmidt/websocket-webchat/internal/hub"
 	"github.com/gorilla/websocket"
 )
 
-type Client struct {
-	Connection *websocket.Conn
-	Alias      string
-}
-type MessageResponse struct {
-	ClientAlias string `json:"clientAlias"`
-	Message     string `json:"message"`
-}
-
-var hubClients []Client
+var hubClients []hub.Client
 
 func (s *Server) WebSocket(w http.ResponseWriter, r *http.Request) {
 
@@ -35,7 +28,7 @@ func (s *Server) WebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	alias := "User_" + strconv.Itoa(len(hubClients))
-	client := &Client{Connection: conn, Alias: alias}
+	client := &hub.Client{Connection: conn, Alias: alias}
 
 	hubClients = append(hubClients, *client)
 
@@ -48,7 +41,8 @@ func (s *Server) WebSocket(w http.ResponseWriter, r *http.Request) {
 			}
 			break
 		}
-		messageResponse := MessageResponse{ClientAlias: client.Alias, Message: string(message)}
+		timestampsMessage := time.Now().Format(time.RFC3339)
+		messageResponse := MessageResponse{ClientAlias: client.Alias, Message: string(message), TimeStamps: timestampsMessage}
 
 		for i := range hubClients {
 			err := hubClients[i].Connection.WriteJSON(messageResponse)

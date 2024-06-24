@@ -1,4 +1,4 @@
-module websocket-webchat
+module github.com/AlexandreSchmidt/websocket-webchat
 
 go 1.22.4
 

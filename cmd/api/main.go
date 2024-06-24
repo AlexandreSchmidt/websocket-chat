@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"websocket-webchat/internal/server"
+
+	"github.com/AlexandreSchmidt/websocket-webchat/internal/server"
 )
 
 func main() {
