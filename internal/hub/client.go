@@ -6,13 +6,26 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type Client struct {
+type client struct {
 	Connection *websocket.Conn
 	Alias      string
-	Created    string
+	Created    time.Time
 }
 
-func (c *Client) New(connection *websocket.Conn) {
+func newClient(connection *websocket.Conn) client {
 
-	c.Created = time.Now().Format(time.RFC3339)
+	c := client{
+		Connection: connection,
+		Alias:      randomAlias(),
+		Created:    time.Now(),
+	}
+
+	return c
+}
+
+func randomAlias() string {
+	alias := "User_"
+
+	return alias
+
 }

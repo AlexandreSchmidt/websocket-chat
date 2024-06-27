@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 interface MessageWS {
   clientAlias: string;
   message: string;
+  timestamps: string;
 }
 const URL = "ws://localhost:8080/ws";
 
@@ -21,7 +22,6 @@ export default function ChatComponent() {
       (event: MessageEvent<string>) => {
         const message = JSON.parse(event.data) as MessageWS;
 
-        console.log(message);
         setMessage([...messages, message]);
       }
     );
@@ -29,31 +29,33 @@ export default function ChatComponent() {
 
   return (
     <>
-      <input
-        className="msg-input"
-        onChange={(event) => {
-          setInput(event.target.value);
-        }}
-        value={input}
-      />
-      <button
-        onClick={() => {
-          console.log(input);
-          socket.current?.send(input);
-          setInput("");
-        }}
-      >
-        enviar
-      </button>
-
-      <h3>Chat Messages</h3>
-
       <div>
         {messages.map((value) => (
           <p>
             {value.clientAlias}: {value.message}
           </p>
         ))}
+      </div>
+      <div className="input-section">
+        <input
+          className="msg-input"
+          onChange={(event) => {
+            setInput(event.target.value);
+          }}
+          value={input}
+        />
+        <button
+          onClick={() => {
+            if (input.length < 2) {
+              alert("Message should have at least 2 characters");
+              return;
+            }
+            socket.current?.send(input);
+            setInput("");
+          }}
+        >
+          enviar
+        </button>
       </div>
     </>
   );
